@@ -11,7 +11,7 @@ export const DRIZZLE = 'DRIZZLE';
 
         provide : DRIZZLE, 
         useFactory : () => {
-            const pool = new Pool({connectionString : 'postgres://user:password@localhost:5432/chat_db'});
+            const pool = new Pool({connectionString : 'postgres://postgres:password@localhost:5432/postgres'});
             return drizzle(pool , {schema}); // pool like epool in c++ to help handle many request and keep connection without handshake 
             },
         }

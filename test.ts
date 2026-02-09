@@ -1,8 +1,6 @@
 // what learn new stuff! 
 // object literal
 
-import { double } from "drizzle-orm/mysql-core";
-
 interface Person 
 {
     name: string;

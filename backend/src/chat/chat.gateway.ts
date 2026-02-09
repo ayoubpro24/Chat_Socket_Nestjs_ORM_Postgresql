@@ -23,6 +23,11 @@ export class ChatGateway {
     
     constructor(@Inject(DRIZZLE) private db: NodePgDatabase<typeof schema>) {}
 
+
+    async handleConnection(client : any) {
+        const history = await this.db.select().from(schema.messages).limit(50);
+        client.emit('message_history', history);
+    }
     @SubscribeMessage('send_message')
     async handleMessage(@MessageBody() data: {sender : string ; content : string})
     {
@@ -35,3 +40,4 @@ export class ChatGateway {
     }
 }
 
+// Receive -> Save to DB -> Get ID back -> Broadcast.
