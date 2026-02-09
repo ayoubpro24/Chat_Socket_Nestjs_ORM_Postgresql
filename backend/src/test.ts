@@ -49,3 +49,15 @@ const doubled = numbers.map((n) => n * n);
 console.log(doubled)
 
 
+// Array Destructuring
+
+const fruits: string[] = ["Banana", "Orange", "Apple", "Mango"];
+const [fruit1, , fruit3] = fruits;
+
+console.log(fruit1);
+console.log(fruit3); 
+
+const [,, third] = [10, 20, 30]; // third = 30
+const [one, ...all] = [1,2,3,4,5]
+console.log("one : " , one, " | all : " , all);
+
