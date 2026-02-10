@@ -1,9 +1,6 @@
 import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer } from "@nestjs/websockets"; 
 import { Server } from "socket.io";
-import { Inject } from "@nestjs/common";
-import { DRIZZLE } from "src/db/db.module";
-import { NodePgDatabase } from "drizzle-orm/node-postgres";
-import * as schema from "src/db/schema"
+import { ChatService } from "./chat.service";
 
 // in lib WebSocketGateway i use this bc i want run Socket io server with specief port but should use TCP [pool] not http server
 // about SubscribeMesage is like event listener if client send packet then focus function to execute.
@@ -21,20 +18,17 @@ export class ChatGateway {
     @WebSocketServer ()
     server : Server;
     
-    constructor(@Inject(DRIZZLE) private db: NodePgDatabase<typeof schema>) {}
+    constructor(private readonly chatService : ChatService) {}
 
 
     async handleConnection(client : any) {
-        const history = await this.db.select().from(schema.messages).limit(50);
+        const history = await this.chatService.getMessage();
         client.emit('message_history', history);
     }
     @SubscribeMessage('send_message')
     async handleMessage(@MessageBody() data: {sender : string ; content : string})
     {
-        const [newMessage] = await this.db.insert(schema.messages).values ({
-            sender : data.sender,
-            content : data.content,
-        }).returning();
+        const [newMessage] = await this.chatService.saveMessage(data.sender, data.content);
         console.log("[newMessage] : ", newMessage); // debug to see how its working if using destructuring Array 
         this.server.emit('reveived_message', newMessage);
     }
